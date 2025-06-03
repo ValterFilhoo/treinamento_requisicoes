@@ -40,7 +40,7 @@
 
                     const li = document.createElement('li');
 
-                    li.innerText = `Id: ${element.id}; Title: ${element.title}; Price: ${element.price}`
+                    li.textContent = `Id: ${element.id}; Title: ${element.title}; Price: ${element.price}`
 
                     list.appendChild(li);
 
@@ -73,8 +73,8 @@
             
             // Realizando uma requisição PUT
             const dataPut = new FormData(form);
-            dataPut.append('id', 21);
-            dataPut.set('title', 'Produto 2');
+            dataPut.append('id', 21); // adcionando um novo elemento na coleção
+            dataPut.set('title', 'Produto 2'); // alterando os dados do form para usar no request PUT
             const objetoPut = Object.fromEntries(dataPut);
 
             await fetch(`https://fakestoreapi.com/products/${objetoPut.id}`, {
