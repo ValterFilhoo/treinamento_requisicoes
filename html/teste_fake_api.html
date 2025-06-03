@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praticando requisições Fetch</title>
+</head>
+<body>
+
+    <nav style="width: 100%; background-color: darkcyan; height: 200px; margin-bottom: 50px; overflow: auto; ">
+
+        <ul class="list">
+
+        </ul>
+
+    </nav>
+
+    <form class="form" id="form" style="display: flex; flex-direction: column; gap: 50px; width: 80%; align-items: center; justify-content: center; margin: 0 auto;">
+
+        <input type="text" name="title" id="title" required placeholder="Título">
+        <input type="number" name="price" id="price" required placeholder="Price">
+        <input type="text" name="description" id="description" required placeholder="Description">
+        <input type="number" name="category" id="category" required placeholder="Category">
+        <input type="text" name="image" id="image" required placeholder="Image">
+
+        <button>Enviar</button>
+
+    </form>
+
+    <script>
+
+        async function requestGet (list) {
+            
+            // Realizando uma requisição GET
+            await fetch ("https://fakestoreapi.com/products")
+            .then(response => response.json())
+            .then(data => {
+
+                data.forEach(element => {
+
+                    const li = document.createElement('li');
+
+                    li.innerText = `Id: ${element.id}; Title: ${element.title}; Price: ${element.price}`
+
+                    list.appendChild(li);
+
+                });
+
+            })
+            .catch(error => console.log("Erro na requisição GET: ", error));
+
+        };
+
+        async function requestPost(form) {
+            
+            const dataPost = new FormData(form);
+
+            const objetoPost = Object.fromEntries(dataPost);
+
+            // Realizando uma requisição POST assicrona
+            await fetch('https://fakestoreapi.com/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(objetoPost)
+            })
+            .then(response => response.json())
+            .then(data => console.log(`Resultado da requisição POST: `, data))
+            .catch(error => console.log(`Erro na requisição POST: ${error}`));
+
+        }
+
+        async function requestPut(form) {
+            
+            // Realizando uma requisição PUT
+            const dataPut = new FormData(form);
+            dataPut.append('id', 21);
+            dataPut.set('title', 'Produto 2');
+            const objetoPut = Object.fromEntries(dataPut);
+
+            await fetch(`https://fakestoreapi.com/products/${objetoPut.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type':'application/json' },
+                body: JSON.stringify(objetoPut)
+            })
+            .then(response => response.json())
+            .then(data => console.log(`Resultado da requisição PUT:`, data))
+            .catch(error => console.log(`Erro na requisição PUT: `, error));
+
+        }
+
+
+        async function requestDelete(id) {
+
+            // Realizando uma requisição DELETE
+            await fetch(`https://fakestoreapi.com/products/${id}`)
+            .then(response => response.json())
+            .then(data => console.log("Resposta da requisição DELETE: ", data))
+            .catch(error => console.log("Erro da requisição DELETE: ", error));
+            
+        }
+
+        const form = document.querySelector(".form");
+        const list = document.querySelector(".list");
+
+        form.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            requestGet(list);
+
+            requestPost(form);
+
+            requestPut(form);
+
+            requestDelete(1);
+
+        });
+
+
+    </script>
+    
+</body>
+</html>

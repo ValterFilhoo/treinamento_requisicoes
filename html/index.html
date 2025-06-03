@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treinamento - Consumo Api</title>
+</head>
+<body>
+
+    <form id="form">
+
+        <input type="text" name="name" id="name" placeholder="name" required>
+
+        <input type="text" name="job" id="job" placeholder="job" required>
+
+        <button id="btnRegister">Cadastrar</button>
+
+    </form>
+
+
+    <script>
+
+        const inputName = document.querySelector("#name");
+        const inputJob = document.querySelector("#job");
+        const form = document.querySelector("#form");
+
+        form.addEventListener("submit", function(event){
+
+            event.preventDefault();
+
+            let dados = {
+                name: inputName.value,
+                job: inputJob.value
+            };
+
+            fetch('https://reqres.in/api/users', {
+                method: 'POST',
+                body: JSON.stringify(dados)
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(response) {
+                console.log(response)
+            })
+
+        });
+
+    </script>
+    
+</body>
+</html>
