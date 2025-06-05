@@ -7,29 +7,76 @@
 </head>
 <body>
 
-    <nav style="width: 100%; background-color: darkcyan; height: 200px; margin-bottom: 50px; overflow: auto; ">
+    <nav style="width: 100%; background-color: rgb(229, 232, 232); height: 300px; margin-bottom: 50px; overflow: auto; ">
 
-        <ul class="list">
+        <h2 style="text-align: center;">Resultado da requisição GET</h2>
 
-        </ul>
+        <ol class="list" style="display: flex; flex-direction: column; align-items: center;">
+
+        </ol>
 
     </nav>
 
-    <form class="form" id="form" style="display: flex; flex-direction: column; gap: 50px; width: 80%; align-items: center; justify-content: center; margin: 0 auto;">
+    <div style="margin-bottom: 100px;">   
 
-        <input type="text" name="title" id="title" required placeholder="Título">
-        <input type="number" name="price" id="price" required placeholder="Price">
-        <input type="text" name="description" id="description" required placeholder="Description">
-        <input type="number" name="category" id="category" required placeholder="Category">
-        <input type="text" name="image" id="image" required placeholder="Image">
+        <h2 style="text-align: center;"> Formulário de Cadastro de produto - POST </h2>
 
-        <p class="resultRequestPost" style="display: none;"></p>
-        <p class="resultRequestPut" style="display: none;"></p>
-        <p class="resultRequestDelete" style="display: none;"></p>
+        <form class="formPost" id="formPut" style="display: flex; flex-direction: column; gap: 50px; width: 80%; align-items: center; justify-content: center; margin: 0 auto;">
 
-        <button>Enviar</button>
+            <input type="text" name="title" id="title" required placeholder="Título">
+            <input type="number" name="price" id="price" required placeholder="Price">
+            <input type="text" name="description" id="description" required placeholder="Description">
+            <input type="number" name="category" id="category" required placeholder="Category">
+            <input type="text" name="image" id="image" required placeholder="Image">
 
-    </form>
+            <p class="resultRequestPost" style="display: none;"></p>
+            <p class="resultRequestDelete" style="display: none;"></p>
+
+            <button style="background-color: green; color: white; padding: 10px; width: 150px;">Enviar</button>
+
+        </form>
+
+    </div>
+
+
+    <div style="margin-bottom: 100px;">   
+
+        <h2 style="text-align: center;"> Formulário de Edição de produto - PUT </h2>
+
+        <form class="formPut" id="formPut" style="display: flex; flex-direction: column; gap: 50px; width: 80%; align-items: center; justify-content: center; margin: 0 auto;">
+
+            <input type="text" name="title" id="title" required placeholder="Título">
+            <input type="number" name="price" id="price" required placeholder="Price">
+            <input type="text" name="description" id="description" required placeholder="Description">
+            <input type="number" name="category" id="category" required placeholder="Category">
+            <input type="text" name="image" id="image" required placeholder="Image">
+
+            <p class="resultRequestPut" style="display: none;"></p>
+
+            <button style="background-color: blue; color: white; padding: 10px; width: 150px;">Editar</button>
+
+        </form>
+
+    </div>
+
+
+
+    <div>   
+
+        <h2 style="text-align: center;"> Formulário de Exclusão de produto - DELETE </h2>
+
+        <form class="formDelete" id="formDelete" style="display: flex; flex-direction: column; gap: 50px; width: 80%; align-items: center; justify-content: center; margin: 0 auto;">
+
+            <input type="text" name="id" id="id" required placeholder="Id">
+
+            <p class="resultRequestPut" style="display: none;"></p>
+
+            <button style="background-color: red; color: white; padding: 10px; width: 150px;">Excluir</button>
+
+        </form>
+
+    </div>
+    
 
     <script>
 
@@ -42,7 +89,7 @@
 
             return productsJson;
 
-        }
+        };
 
         /* Primeira versão com a função fazendo a requisição e inserindo no container da lista de produtos 
         async function requestGetProduct(list) {
@@ -69,14 +116,14 @@
 
         */
 
-        async function requestPostProduct(form, paragraph) {
+        function requestPostProduct(form, paragraph) {
             
             const dataPost = new FormData(form);
 
             const objetoPost = Object.fromEntries(dataPost);
 
             // Realizando uma requisição POST assicrona
-            await fetch('https://fakestoreapi.com/products', {
+            fetch('https://fakestoreapi.com/products', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(objetoPost)
@@ -99,7 +146,7 @@
 
         };
 
-        async function requestPutProduct(form, paragraph) {
+        function requestPutProduct(form, paragraph) {
             
             // Realizando uma requisição PUT
             const dataPut = new FormData(form);
@@ -107,7 +154,7 @@
             dataPut.set('title', 'Produto 2'); // alterando os dados do form para usar no request PUT
             const objetoPut = Object.fromEntries(dataPut);
 
-            await fetch(`https://fakestoreapi.com/products/${objetoPut.id}`, {
+           fetch(`https://fakestoreapi.com/products/${objetoPut.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type':'application/json' },
                 body: JSON.stringify(objetoPut)
@@ -131,10 +178,10 @@
         };
 
 
-        async function requestDeleteProduct(id, paragraph) {
+        function requestDeleteProduct(id, paragraph) {
 
             // Realizando uma requisição DELETE
-            await fetch(`https://fakestoreapi.com/products/${id}`)
+            fetch(`https://fakestoreapi.com/products/${id}`)
             .then(response => response.json())
             .then(data => {
 
@@ -151,7 +198,7 @@
             
         };
 
-        const form = document.querySelector(".form");
+        const formPost = document.querySelector(".formPost");
         const list = document.querySelector(".list");
 
         const resultRequestPost = document.querySelector(".resultRequestPost");
@@ -159,8 +206,9 @@
         const resultRequestDelete = document.querySelector(".resultRequestDelete");
 
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", async function() {
 
+            /*
             requestGetProduct().then(products => {
 
                 products.forEach(element => {
@@ -175,7 +223,38 @@
 
             }).catch(error => {
                 console.log("Erro na requisição GET dos produtos: ", error)
-            });
+            }); 
+            */
+
+            /* Para receber o possível erro da promisse do fetch, 
+                quando usado async e await, precisa utilizar o try-catch */
+            try {
+                
+                const products = await requestGetProduct();
+                console.log(products);
+
+                // funciona como um container evitando que os elementos sejam 
+                const containerFragment = new DocumentFragment();
+
+                products.forEach(product => {
+                    
+                    const li = document.createElement("li");
+
+                    li.textContent = `Title: ${product.title}`;
+                    li.style.fontFamily = "Arial"
+                    li.style.marginTop = "20px";
+
+                    containerFragment.appendChild(li);
+
+                });
+
+
+                list.appendChild(containerFragment);
+                
+
+            } catch (error) {
+                console.log("Erro na requisição GET dos produtos: ", error);
+            };
 
         });
 
