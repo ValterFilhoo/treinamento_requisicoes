@@ -23,6 +23,10 @@
         <input type="number" name="category" id="category" required placeholder="Category">
         <input type="text" name="image" id="image" required placeholder="Image">
 
+        <p class="resultRequestPost" style="display: none;"></p>
+        <p class="resultRequestPut" style="display: none;"></p>
+        <p class="resultRequestDelete" style="display: none;"></p>
+
         <button>Enviar</button>
 
     </form>
@@ -65,7 +69,7 @@
 
         */
 
-        async function requestPostProduct(form) {
+        async function requestPostProduct(form, paragraph) {
             
             const dataPost = new FormData(form);
 
@@ -78,12 +82,24 @@
                 body: JSON.stringify(objetoPost)
             })
             .then(response => response.json())
-            .then(data => console.log(`Resultado da requisição POST: `, data))
-            .catch(error => console.log(`Erro na requisição POST: ${error}`));
+            .then(data => {
+                
+                console.log(`Resultado da requisição POST: `, data)
+                paragraph.style.display = "flex";
+                paragraph.textContent = "Requisição POST feita com sucesso!";
+                
+            })
+            .catch(error => {
 
-        }
+                console.log(`Erro na requisição POST: ${error}`);
+                paragraph.style.display = "flex";
+                paragraph.textContent = "Erro na requisição POST.";
 
-        async function requestPutProduct(form) {
+            });
+
+        };
+
+        async function requestPutProduct(form, paragraph) {
             
             // Realizando uma requisição PUT
             const dataPut = new FormData(form);
@@ -97,24 +113,51 @@
                 body: JSON.stringify(objetoPut)
             })
             .then(response => response.json())
-            .then(data => console.log(`Resultado da requisição PUT:`, data))
-            .catch(error => console.log(`Erro na requisição PUT: `, error));
+            .then(data => {
 
-        }
+                console.log(`Resultado da requisição PUT:`, data);
+                paragraph.style.display = "flex";
+                paragraph.textContent = "Requisição PUT feita com sucesso!";
+
+            })
+            .catch(error => {
+
+                console.log(`Erro na requisição PUT: ${error}`);
+                paragraph.style.display = "flex";
+                paragraph.textContent = "Erro na requisição PUT.";
+
+            });
+
+        };
 
 
-        async function requestDeleteProduct(id) {
+        async function requestDeleteProduct(id, paragraph) {
 
             // Realizando uma requisição DELETE
             await fetch(`https://fakestoreapi.com/products/${id}`)
             .then(response => response.json())
-            .then(data => console.log("Resposta da requisição DELETE: ", data))
-            .catch(error => console.log("Erro da requisição DELETE: ", error));
+            .then(data => {
+
+                console.log("Resposta da requisição DELETE: ", data);
+                paragraph.style.display = "flex";
+                paragraph.textContent = "Requisição DELETE feita com sucesso!";
+
+            })
+            .catch(error => {
+                console.log(`Erro na requisição DELETE: ${error}`);
+                paragraph.style.display = "flex";
+                paragraph.textContent = "Erro na requisição DELETE.";
+            });
             
-        }
+        };
 
         const form = document.querySelector(".form");
         const list = document.querySelector(".list");
+
+        const resultRequestPost = document.querySelector(".resultRequestPost");
+        const resultRequestPut = document.querySelector(".resultRequestPut");
+        const resultRequestDelete = document.querySelector(".resultRequestDelete");
+
 
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -140,11 +183,11 @@
 
             event.preventDefault();
 
-            requestPostProduct(form);
+            requestPostProduct(form, resultRequestPost);
 
-            requestPutProduct(form);
+            requestPutProduct(form, resultRequestPut);
 
-            requestDeleteProduct(1);
+            requestDeleteProduct(1, resultRequestDelete);
 
         });
 
