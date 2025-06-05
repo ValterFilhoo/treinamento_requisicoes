@@ -17,11 +17,12 @@
 
     </nav>
 
+
     <div style="margin-bottom: 100px;">   
 
         <h2 style="text-align: center;"> Formulário de Cadastro de produto - POST </h2>
 
-        <form class="formPost" id="formPut" style="display: flex; flex-direction: column; gap: 50px; width: 80%; align-items: center; justify-content: center; margin: 0 auto;">
+        <form class="formPost" id="formPost" style="display: flex; flex-direction: column; gap: 50px; width: 80%; align-items: center; justify-content: center; margin: 0 auto;">
 
             <input type="text" name="title" id="title" required placeholder="Título">
             <input type="number" name="price" id="price" required placeholder="Price">
@@ -29,8 +30,7 @@
             <input type="number" name="category" id="category" required placeholder="Category">
             <input type="text" name="image" id="image" required placeholder="Image">
 
-            <p class="resultRequestPost" style="display: none;"></p>
-            <p class="resultRequestDelete" style="display: none;"></p>
+            <p class="paragraphResultRequestPost" style="display: none;"></p>
 
             <button style="background-color: green; color: white; padding: 10px; width: 150px;">Enviar</button>
 
@@ -45,21 +45,20 @@
 
         <form class="formPut" id="formPut" style="display: flex; flex-direction: column; gap: 50px; width: 80%; align-items: center; justify-content: center; margin: 0 auto;">
 
+            <input type="number" name="id" id="id" placeholder="id">
             <input type="text" name="title" id="title" required placeholder="Título">
             <input type="number" name="price" id="price" required placeholder="Price">
             <input type="text" name="description" id="description" required placeholder="Description">
             <input type="number" name="category" id="category" required placeholder="Category">
             <input type="text" name="image" id="image" required placeholder="Image">
 
-            <p class="resultRequestPut" style="display: none;"></p>
+            <p class="paragraphResultRequestPut" style="display: none;"></p>
 
             <button style="background-color: blue; color: white; padding: 10px; width: 150px;">Editar</button>
 
         </form>
 
     </div>
-
-
 
     <div>   
 
@@ -69,7 +68,7 @@
 
             <input type="text" name="id" id="id" required placeholder="Id">
 
-            <p class="resultRequestPut" style="display: none;"></p>
+            <p class="paragraphResultRequestDelete" style="display: none;"></p>
 
             <button style="background-color: red; color: white; padding: 10px; width: 150px;">Excluir</button>
 
@@ -118,15 +117,14 @@
 
         function requestPostProduct(form, paragraph) {
             
-            const dataPost = new FormData(form);
-
-            const objetoPost = Object.fromEntries(dataPost);
+            const dataFormPost = new FormData(form);
+            const objectFormPost = Object.fromEntries(dataFormPost);
 
             // Realizando uma requisição POST assicrona
             fetch('https://fakestoreapi.com/products', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(objetoPost)
+                body: JSON.stringify(objectFormPost)
             })
             .then(response => response.json())
             .then(data => {
@@ -149,15 +147,15 @@
         function requestPutProduct(form, paragraph) {
             
             // Realizando uma requisição PUT
-            const dataPut = new FormData(form);
-            dataPut.append('id', 21); // adcionando um novo elemento na coleção
-            dataPut.set('title', 'Produto 2'); // alterando os dados do form para usar no request PUT
-            const objetoPut = Object.fromEntries(dataPut);
+            const dataFormPut = new FormData(form);
+            const objectFormPut = Object.fromEntries(dataFormPut);
 
-           fetch(`https://fakestoreapi.com/products/${objetoPut.id}`, {
+            console.log(`Valor do atributo 'id' do objeto form da Req. PUT: ${objectFormPut.id}`);
+
+           fetch(`https://fakestoreapi.com/products/${objectFormPut.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type':'application/json' },
-                body: JSON.stringify(objetoPut)
+                body: JSON.stringify(objectFormPut)
             })
             .then(response => response.json())
             .then(data => {
@@ -191,22 +189,18 @@
 
             })
             .catch(error => {
+
                 console.log(`Erro na requisição DELETE: ${error}`);
                 paragraph.style.display = "flex";
                 paragraph.textContent = "Erro na requisição DELETE.";
+                
             });
             
         };
 
-        const formPost = document.querySelector(".formPost");
-        const list = document.querySelector(".list");
-
-        const resultRequestPost = document.querySelector(".resultRequestPost");
-        const resultRequestPut = document.querySelector(".resultRequestPut");
-        const resultRequestDelete = document.querySelector(".resultRequestDelete");
-
-
         document.addEventListener("DOMContentLoaded", async function() {
+
+            const list = document.querySelector(".list");
 
             /*
             requestGetProduct().then(products => {
@@ -226,14 +220,15 @@
             }); 
             */
 
-            /* Para receber o possível erro da promisse do fetch, 
-                quando usado async e await, precisa utilizar o try-catch */
+            // Para receber o possível erro ou rejected como resposta da promisse do fetch, 
+            // quando usado async e await, precisa utilizar o try-catch 
             try {
                 
                 const products = await requestGetProduct();
                 console.log(products);
 
-                // funciona como um container evitando que os elementos sejam 
+                // Funciona como um container temporário,
+                //  evitando que os elementos sejam renderizados um por um na tela
                 const containerFragment = new DocumentFragment();
 
                 products.forEach(product => {
@@ -258,18 +253,41 @@
 
         });
 
-        form.addEventListener("submit", function(event) {
+        const formPost = document.querySelector(".formPost");
+        formPost.addEventListener("submit", function(event) {
 
             event.preventDefault();
 
-            requestPostProduct(form, resultRequestPost);
-
-            requestPutProduct(form, resultRequestPut);
-
-            requestDeleteProduct(1, resultRequestDelete);
+            const paragraphResultRequestPost = document.querySelector(".paragraphResultRequestPost");
+            requestPostProduct(formPost, paragraphResultRequestPost);
 
         });
 
+        const formPut = document.querySelector(".formPut");
+        formPut.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+            
+            const paragraphResultRequestPut = document.querySelector(".paragraphResultRequestPut");
+
+            requestPutProduct(formPut, paragraphResultRequestPut)
+
+        });
+
+        
+        const formDelete = document.querySelector(".formDelete");
+        formDelete.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const dataForm = new FormData(formDelete);
+            const id = dataForm.get('id');
+            const paragraphResultRequestDelete = document.querySelector(".paragraphResultRequestDelete");
+
+            requestDeleteProduct(id, paragraphResultRequestDelete);
+
+
+        });
 
     </script>
     
