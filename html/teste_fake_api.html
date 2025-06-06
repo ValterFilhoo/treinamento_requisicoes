@@ -126,7 +126,12 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(objectFormPost)
             })
-            .then(response => response.json())
+            .then(response => {
+
+                console.log(`Status da requisição POST: ${response.status}`);
+                return response.json();
+
+            }) 
             .then(data => {
                 
                 console.log(`Resultado da requisição POST: `, data)
@@ -151,13 +156,19 @@
             const objectFormPut = Object.fromEntries(dataFormPut);
 
             console.log(`Valor do atributo 'id' do objeto form da Req. PUT: ${objectFormPut.id}`);
+            console.log(`Valor do atributo 'id' do FormData da Req. PUT: ${dataFormPut.get('id')}`);
 
            fetch(`https://fakestoreapi.com/products/${objectFormPut.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type':'application/json' },
                 body: JSON.stringify(objectFormPut)
             })
-            .then(response => response.json())
+            .then(response => {
+
+                console.log(`Status da requisição PUT: ${response.status}`);
+                return response.json();
+
+            }) 
             .then(data => {
 
                 console.log(`Resultado da requisição PUT:`, data);
@@ -179,8 +190,15 @@
         function requestDeleteProduct(id, paragraph) {
 
             // Realizando uma requisição DELETE
-            fetch(`https://fakestoreapi.com/products/${id}`)
-            .then(response => response.json())
+            fetch(`https://fakestoreapi.com/products/${id}`, {
+                method: "DELETE"
+            })
+            .then(response => {
+
+                console.log(`Status da requisição DELETE: ${response.status}`);
+                return response.json();
+
+            })
             .then(data => {
 
                 console.log("Resposta da requisição DELETE: ", data);
@@ -225,7 +243,7 @@
             try {
                 
                 const products = await requestGetProduct();
-                console.log(products);
+                console.log(`Produtos da Requisição GET:`, products);
 
                 // Funciona como um container temporário,
                 //  evitando que os elementos sejam renderizados um por um na tela
@@ -253,6 +271,8 @@
 
         });
 
+
+
         const formPost = document.querySelector(".formPost");
         formPost.addEventListener("submit", function(event) {
 
@@ -262,6 +282,8 @@
             requestPostProduct(formPost, paragraphResultRequestPost);
 
         });
+
+
 
         const formPut = document.querySelector(".formPut");
         formPut.addEventListener("submit", function(event) {
@@ -275,6 +297,8 @@
         });
 
         
+
+
         const formDelete = document.querySelector(".formDelete");
         formDelete.addEventListener("submit", function(event) {
 
@@ -288,6 +312,8 @@
 
 
         });
+
+
 
     </script>
     
